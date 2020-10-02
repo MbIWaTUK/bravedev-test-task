@@ -1,7 +1,5 @@
 import { makeStyles } from "@material-ui/core/styles"
 
-const useStyles = makeStyles({})
-const classes = useStyles()
 const Error = ({ statusCode }) => (
   <>
     <div className="error-container">
