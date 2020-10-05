@@ -3,21 +3,18 @@ import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from "@material-ui/core/styles"
 import { FormControl, InputLabel, Select, Link, MenuItem, Grid } from '@material-ui/core'
+import { gql } from "@apollo/client"
+import { initializeApollo } from "../lib/apolloClient"
 
-const operatorList = [
-  {
-    id: 1,
-    name: "МТС"
-  },
-  {
-    id: 2,
-    name: "Билайн"
-  },
-  {
-    id: 3,
-    name: "Мегафон"
-  },
-]
+const OPERATORLIST = gql`
+query Operators {
+  operators {
+    id
+    name
+  }
+}
+`
+
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -33,8 +30,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export default function Index() {
+export default function IndexPage({ operatorList }) {
   const classes = useStyles()
+
   return (
     <Container >
       <Grid
@@ -56,7 +54,7 @@ export default function Index() {
               labelId="operator"
               id="operator-select"
             >
-              {
+              {operatorList &&
                 operatorList.map(o => (
                   <Link href={`/operator/${o.name}`} key={o.id} underline="none" className={classes.link}>
                     <MenuItem value={10} >{o.name}</MenuItem>
@@ -71,4 +69,17 @@ export default function Index() {
       </Grid>
     </Container>
   )
+}
+
+IndexPage.getInitialProps = async (ctx) => {
+  const apolloClient = initializeApollo()
+
+  const { data } = await apolloClient.query({
+    query: OPERATORLIST,
+  })
+
+  return {
+    initialApolloState: apolloClient.cache.extract(),
+    operatorList: data ? data.operators : [],
+  }
 }

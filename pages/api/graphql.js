@@ -3,6 +3,11 @@ import { ApolloServer, gql } from 'apollo-server-micro'
 const typeDefs = gql`
   type Query {
     users: [User!]!
+    operators:[Operator]
+  }
+  type Operator{
+    id: ID
+    name: String
   }
   type User {
     name: String
@@ -22,6 +27,23 @@ const resolvers = {
     users(parent, args, context) {
       return [{ name: 'Nextjs' }]
     },
+    operators: async (parent, args, context, info) => {
+      const operatorList = [
+        {
+          id: 1,
+          name: "МТС"
+        },
+        {
+          id: 2,
+          name: "Билайн"
+        },
+        {
+          id: 3,
+          name: "Мегафон"
+        },
+      ]
+      return operatorList
+    }
   },
   Mutation: {
     pay: async (parent, args, context, info) => {
